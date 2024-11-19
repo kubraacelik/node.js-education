@@ -9,6 +9,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+
 rl.question("Sayı 1 giriniz: ", (num1) => {
   rl.question("Sayı 2 giriniz: ", (num2) => {
     const result = Number(num1) + Number(num2);
