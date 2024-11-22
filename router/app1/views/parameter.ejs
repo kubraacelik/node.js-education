@@ -4,11 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>
+        <%= title %>
+    </title>
 </head>
 
 <body>
+    <%- include("partials/navbar") %>
+    
     <h2>Parameter</h2>
+    <h1>min: <%= min %>
+    </h1>
+    <h1>max: <%= max %>
+    </h1>
 </body>
 
 </html>

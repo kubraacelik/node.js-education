@@ -4,11 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>
+        <%= title %>
+    </title>
 </head>
 
 <body>
-    <h1>Hello From Server</h1>
+    <%- include("partials/navbar") %>
+        <button id="myBtn">Tıkla</button>
+        <% let name="kubra" %>
+            <h1>Hello From Server</h1>
+            <p>
+                <%= name %>
+            </p>
+            <h1> Sayı :
+                <%= number %>
+            </h1>
+            <h2> Aktif mi? :
+                <%= isActive %>
+            </h2>
+            <h3> Verinin boyutu:
+                <%= myArr.length %>
+            </h3>
+            <ul>
+                <% for(let i=0; i<myArr.length; i++){ %>
+                    <li>
+                        <%= myArr[i].id %>
+                    </li>
+                    <% } %>
+            </ul>
+
+            <% myArr.forEach((item,index)=>{ %>
+                <p>
+                    <%= index %> - <%= item.id %>
+                </p>
+                <% }) %>
+
+                    <script src="/assets/client.js"></script>
 </body>
 
 </html>

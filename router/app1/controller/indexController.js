@@ -1,12 +1,20 @@
 const Index = (req, res) => {
-  res.sendFile("C:\\Users\\hp\\nodejs-egitim\\router\\app1\\" + "/index.html");
+  // index.ejs'yi render etti
+  res.render("index", {
+    title: "Anasayfa",
+    number: 27,
+    isActive: true,
+    myArr: [{ id: "Ali" }, { id: "Ayşe" }],
+  });
 };
 
 const getParameters = (req, res) => {
-  console.log(req, params, req.query);
-  res.sendFile(
-    "C:\\Users\\hp\\nodejs-egitim\\router\\app1\\" + "/parameter.html"
-  );
+  console.log(req.params, req.query);
+  res.render("parameter", {
+    title: "Parameter",
+    min: req.query.min,
+    max: req.query.max,
+  });
 };
 
 const Post = (req, res) => {
