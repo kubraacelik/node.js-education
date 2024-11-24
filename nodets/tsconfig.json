@@ -1,0 +1,13 @@
+// TypeScript, bir projeyi derlerken (JavaScript'e dönüştürürken) hangi ayarların kullanılacağını belirtmek için bu dosyayı kullanır
+{
+        "compilerOptions": {
+            "target": "ES5", //TypeScript kodunun derlendikten sonra hangi JavaScript sürümüne dönüştürüleceğini belirtir
+            "module": "CommonJS", //Hangi modül sisteminin kullanılacağını belirler
+            "outDir": "./dist", //Derlenen JavaScript dosyalarının nereye kaydedileceğini belirtir
+            "rootDir": "./app", //Kaynak TypeScript dosyalarının yer aldığı ana klasörü belirtir
+            "strict": true, //TypeScript'in sıkı tip kontrolü yapmasını sağlar
+            "skipDefaultLibCheck": true, //TypeScript standart kütüphaneleri (lib.d.ts) kontrol etmeyi atlar
+            "esModuleInterop": true, //ES6 modülleri ile CommonJS modüllerinin birlikte çalışmasını sağlar
+            "forceConsistentCasingInFileNames": true //Dosya adlarının büyük/küçük harf uyumluluğunu zorunlu kılar
+        }
+}
