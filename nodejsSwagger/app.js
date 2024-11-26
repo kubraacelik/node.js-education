@@ -24,9 +24,8 @@ let myData = [
 ];
 
 router.get("/list", (req, res) => {
-    res.status(200).json(myData);
-  });
-  
+  res.status(200).json(myData);
+});
 
 router.post("/create", (req, res) => {
   const { team } = req.body;
