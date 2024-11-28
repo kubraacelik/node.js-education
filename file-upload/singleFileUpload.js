@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 
 // yüklenen dosyaları kontrol etmek için kullanılır
 const fileFilter = (req, file, cb) => {
-  // Eğer dosyanın MIME tipi bir görüntü dosyası içeriyorsa (image kelimesini içeriyorsa) dosya kabul edilir
+  // Eğer dosyanın tipi resim ise dosya kabul edilir
   if (file.mimetype.includes("image")) {
     cb(null, true);
   } else {
