@@ -20,9 +20,14 @@ const storage = multer.diskStorage({
 
 // yüklenen dosyaları kontrol etmek için kullanılır
 const fileFilter = (req, file, cb) => {
-  console.log("fileFilter ", file);
+  // Eğer dosyanın MIME tipi bir görüntü dosyası içeriyorsa (image kelimesini içeriyorsa) dosya kabul edilir
+  if (file.mimetype.includes("image")) {
+    cb(null, true);
+  } else {
+    cb({ message: "Dosya Tipi Desteklenmiyor" }, false);
+  }
 
-  cb(null, true);
+  console.log("fileFilter ", file);
 };
 
 // postman'den eklerken dosya adında eklenmeli

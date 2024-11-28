@@ -11,6 +11,9 @@ router.get("/", (req, res) => {
 
 router.post("/fileUpload", (req, res) => {
   singleFileUpload(req, res, (err) => {
+    if (err) {
+      res.json(err);
+    }
     console.log(req.file);
   });
 });
