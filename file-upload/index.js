@@ -15,13 +15,14 @@ if (!fs.existsSync("./uploads")) {
   fs.mkdirSync("./uploads");
 }
 
-router.post("/fileUpload", (req, res) => {
-  singleFileUpload(req, res, (err) => {
-    if (err) {
-      res.json(err);
-    }
-    console.log(req.file);
-  });
+// postman'den eklerken dosya adında eklenmeli ve singleFileUpload middleware yaptık
+router.post("/fileUpload", singleFileUpload.single("dosya"), (req, res) => {
+  // singleFileUpload(req, res, (err) => {
+  //   if (err) {
+  //     res.json(err);
+  //   }
+  //   console.log(req.file);
+  // });
 });
 
 app.use(router);

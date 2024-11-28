@@ -30,9 +30,6 @@ const fileFilter = (req, file, cb) => {
   console.log("fileFilter ", file);
 };
 
-// postman'den eklerken dosya adında eklenmeli
-const upload = multer({ storage: storage, fileFilter: fileFilter }).single(
-  "dosya"
-);
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 module.exports = upload;
