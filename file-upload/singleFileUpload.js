@@ -24,7 +24,7 @@ const fileFilter = (req, file, cb) => {
   if (file.mimetype.includes("image")) {
     cb(null, true);
   } else {
-    cb({ message: "Dosya Tipi Desteklenmiyor" }, false);
+    cb(new multer.MulterError(300, file.originalname), false);
   }
 
   console.log("fileFilter ", file);

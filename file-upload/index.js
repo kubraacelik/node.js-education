@@ -3,6 +3,7 @@ const app = express();
 const router = express.Router();
 const fs = require("fs");
 const singleFileUpload = require("./singleFileUpload");
+const multer = require("multer");
 
 app.use(express.json());
 
@@ -15,19 +16,30 @@ if (!fs.existsSync("./uploads")) {
   fs.mkdirSync("./uploads");
 }
 
+const _upload = singleFileUpload.array("dosyalar", 5);
+
 // postman'den eklerken dosya adında eklenmeli ve singleFileUpload middleware yaptık
-router.post(
-  "/fileUpload",
-  singleFileUpload.array("dosyalar", 5),
-  (req, res) => {
-    // singleFileUpload(req, res, (err) => {
-    //   if (err) {
-    //     res.json(err);
-    //   }
-    //   console.log(req.file);
-    // });
-  }
-);
+router.post("/fileUpload", (req, res) => {
+  _upload(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      console.log("multer error ", err);
+      res.json(err);
+    } else {
+      console.log("hataa", err);
+    }
+    if (err) {
+      res.send("Hata var");
+    } else {
+      res.send("Okey");
+    }
+  });
+  // singleFileUpload(req, res, (err) => {
+  //   if (err) {
+  //     res.json(err);
+  //   }
+  //   console.log(req.file);
+  // });
+});
 
 app.use(router);
 
