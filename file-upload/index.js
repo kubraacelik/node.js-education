@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const router = express.Router();
+const fs = require("fs");
 const singleFileUpload = require("./singleFileUpload");
 
 app.use(express.json());
@@ -8,6 +9,11 @@ app.use(express.json());
 router.get("/", (req, res) => {
   res.send("Merhaba");
 });
+
+// belirtilen dizinde uploads klasörü yoksa ekle
+if (!fs.existsSync("./uploads")) {
+  fs.mkdirSync("./uploads");
+}
 
 router.post("/fileUpload", (req, res) => {
   singleFileUpload(req, res, (err) => {
