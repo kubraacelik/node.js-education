@@ -6,6 +6,7 @@ const singleFileUpload = require("./singleFileUpload");
 const multipleFileUpload = require("./multipleFileUpload");
 const differentFieldsFileUpload = require("./differentFieldsFileUpload");
 const anyUpload = require("./anyUpload");
+const memoryStorageUpload = require("./memoryStorageUpload");
 const multer = require("multer");
 
 app.use(express.json());
@@ -58,6 +59,15 @@ router.post("/differentFieldsFileUpload", (req, res) => {
 
 router.post("/anyUpload", (req, res) => {
   anyUpload(req, res, (err) => {
+    if (err) {
+      res.json(err);
+    }
+    console.log(req.files);
+  });
+});
+
+router.post("/memoryStorageUpload", (req, res) => {
+  memoryStorageUpload(req, res, (err) => {
     if (err) {
       res.json(err);
     }

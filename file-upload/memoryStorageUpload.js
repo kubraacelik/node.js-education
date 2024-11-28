@@ -1,0 +1,34 @@
+//! dosya yükleme işlemleri için kullanılan middleware
+const multer = require("multer");
+
+// dosyaların sunucuda nereye ve hangi isimle kaydedileceğini belirler
+const storage = multer.memoryStorage({
+  filename: function (req, file, cb) {
+    console.log("filename ", file);
+
+    cb(
+      null,
+      file.fieldname + "_" + Date.now() + "_" + "Multer" + file.originalname
+    );
+  },
+});
+
+// yüklenen dosyaları kontrol etmek için kullanılır
+const fileFilter = (req, file, cb) => {
+  // Eğer dosyanın tipi resim ise dosya kabul edilir
+  if (file.mimetype.includes("image")) {
+    cb(null, true);
+  } else {
+    cb(new multer.MulterError(300, file.originalname), false);
+  }
+
+  console.log("fileFilter ", file);
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 3000000 },
+}).any();
+
+module.exports = upload;
