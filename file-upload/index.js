@@ -5,6 +5,7 @@ const fs = require("fs");
 const singleFileUpload = require("./singleFileUpload");
 const multipleFileUpload = require("./multipleFileUpload");
 const differentFieldsFileUpload = require("./differentFieldsFileUpload");
+const anyUpload = require("./anyUpload");
 const multer = require("multer");
 
 app.use(express.json());
@@ -48,6 +49,15 @@ router.post("/multipleFileUpload", (req, res) => {
 
 router.post("/differentFieldsFileUpload", (req, res) => {
   differentFieldsFileUpload(req, res, (err) => {
+    if (err) {
+      res.json(err);
+    }
+    console.log(req.files);
+  });
+});
+
+router.post("/anyUpload", (req, res) => {
+  anyUpload(req, res, (err) => {
     if (err) {
       res.json(err);
     }

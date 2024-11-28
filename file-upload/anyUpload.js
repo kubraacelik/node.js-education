@@ -34,9 +34,6 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: { fileSize: 3000000 },
-}).fields([
-  { name: "profile_pic", maxCount: 1 },
-  { name: "cover_picture", maxCount: 2 },
-]);
+}).any();
 
 module.exports = upload;
