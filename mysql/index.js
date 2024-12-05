@@ -369,12 +369,130 @@ const deleteOneToOneById = (id) => {
     console.log("res", res);
     const cvId = res[0].personel_cv_id;
     const query = "DELETE FROM personel_cv WHERE personel_cv_id = ?";
-  connection.query(query, [cvId], (err, res) => {
+    connection.query(query, [cvId], (err, res) => {
+      if (err) {
+        console.log("err", err);
+      }
+      console.log("res", res);
+    });
+  });
+};
+
+//* Çoğa-Çok tablo oluşturma
+//NOT: FOREIGN KEY verilmiş bu da bire-çok tablosunu oluşturur
+const createManyToManyTable = () => {
+  connection.query(
+    `CREATE TABLE gonderi(
+    gonderi_id INT AUTO_INCREMENT PRIMARY KEY,
+    gonderi_ad VARCHAR(100))
+    `,
+    (err, result) => {
+      if (!err) {
+        connection.query(
+          `CREATE TABLE etiket(
+        etiket_id INT AUTO_INCREMENT PRIMARY KEY,
+        etiket_ad VARCHAR(100))
+        `,
+          (err, result) => {
+            if (!err) {
+              console.log("Hata yok");
+              connection.query(
+                `CREATE TABLE gonderi_etiket(
+                gonderi_etiket_id INT AUTO_INCREMENT PRIMARY KEY,
+                gonderi_id INT NOT NULL,
+                etiket_id INT NOT NULL,
+                FOREIGN KEY (gonderi_id) REFERENCES gonderi(gonderi_id) ON DELETE CASCADE,
+                FOREIGN KEY (etiket_id) REFERENCES etiket(etiket_id) ON DELETE CASCADE)
+              `,
+                (err, result) => {
+                  if (!err) {
+                    console.log("Hata yok");
+                  } else {
+                    console.log("hata", err);
+                  }
+                }
+              );
+            } else {
+              console.log("hata", err);
+            }
+          }
+        );
+      } else {
+        console.log("hata", err);
+      }
+    }
+  );
+};
+
+//*Çoğa-Çok tabloya Veri Ekleme
+const createManyToManyUser = (data) => {
+  const query = `INSERT INTO gonderi (gonderi_ad) VALUES (?)`;
+  connection.query(query, [data.gonderi_ad], (err, res) => {
+    const gonderiId = res.insertId;
+    const etiketIds = [];
+    for (let index = 0; index < data.etiket.length; index++) {
+      const query = `INSERT INTO etiket (etiket_ad) VALUES (?)`;
+      connection.query(query, [data.etiket[index]], (err, res) => {
+        console.log("hata", err);
+        const query = `INSERT INTO gonderi_etiket (gonderi_id, etiket_id) VALUES (?,?)`;
+        connection.query(query, [gonderiId, res.insertId], (err, res) => {
+          console.log("gonderi etiket", res);
+          console.log("gonderi etiket hata", err);
+        });
+        etiketIds.push(res.insertId);
+      });
+    }
+  });
+};
+
+const createOtherData = (data) => {
+  const query = `INSERT INTO gonderi (gonderi_ad) VALUES (?)`;
+  connection.query(query, [data.gonderi_ad], (err, res) => {
+    const gonderiId = res.insertId;
+    for (let index = 0; index < data.etiket.length; index++) {
+      console.log("hata", err);
+      const query = `INSERT INTO gonderi_etiket (gonderi_id, etiket_id) VALUES (?,?)`;
+      connection.query(query, [gonderiId, data.etiket[index]], (err, res) => {
+        console.log("gonderi etiket", res);
+        console.log("gonderi etiket hata", err);
+      });
+    }
+  });
+};
+
+//*Çoğa-Çok Tablodan Veri Listeleme
+const getAllData3 = () => {
+  const query = `SELECT * FROM gonderi_etiket AS ge 
+                  INNER JOIN gonderi AS g ON g.gonderi_id = ge.gonderi_id
+                  INNER JOIN etiket AS e ON e.etiket_id = ge.etiket_id
+                  WHERE ge.etiket_id=10 
+                  `;
+  connection.query(query, (err, res) => {
+    console.log("err", err);
+    console.log("res", res);
+  });
+};
+
+//*Çoğa-Çok Tablosunda Id'ye Göre Veri Güncelleme
+const updateManyToManyById = (etiketId, gonderiId, oldEtiketId) => {
+  const query =
+    "UPDATE gonderi_etiket SET etiket_id = ? WHERE gonderi_id = ? AND etiket_id = ?";
+  connection.query(query, [etiketId, gonderiId, oldEtiketId], (err, res) => {
     if (err) {
       console.log("err", err);
     }
     console.log("res", res);
   });
+};
+
+const removeEtiketFromGonder = (gonderiId, etiketId) => {
+  const query =
+    "DELETE FROM gonderi_etiket WHERE gonderi_id = ? AND etiket_id = ?";
+  connection.query(query, [gonderiId, etiketId], (err, res) => {
+    if (err) {
+      console.log("err", err);
+    }
+    console.log("res", res);
   });
 };
 
@@ -407,4 +525,16 @@ connection.connect((err) => {
   // getAllRelationsData2()
   // updateOneToOneById(3,"Yeni Bir CV2");
   // deleteOneToOneById(3)
+  // createManyToManyTable();
+  //  createManyToManyUser({
+  //   gonderi_ad: "Merhaba bugün hava çok güzel",
+  //   etiket: ["#piknik", "#gezi", "#eglence"],
+  //  });
+  // createOtherData({
+  //   gonderi_ad: "Merhaba bugün hava ne kadar güzel, hadi dışarı çıkalım",
+  //   etiket: [1, 2],
+  // });
+  // getAllData3();
+  // updateManyToManyById(4,1,1)
+  // removeEtiketFromGonder(1,3)
 });
