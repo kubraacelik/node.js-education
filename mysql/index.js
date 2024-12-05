@@ -157,6 +157,114 @@ const updateById = (name, surname, id) => {
   });
 };
 
+//!Bire-Çok tablo oluşturma
+//NOT: FOREIGN KEY verilmiş bu da bire-çok tablosunu oluşturur
+const createOneToManyTable = () => {
+  connection.query(
+    `CREATE TABLE kisiler(
+    kisi_id INT AUTO_INCREMENT PRIMARY KEY,
+    kisi_ad VARCHAR(100),
+    kisi_soyad VARCHAR(100))
+    `,
+    (err, result) => {
+      if (!err) {
+        connection.query(
+          `CREATE TABLE sosyal_medya(
+        sosyal_medya_id INT AUTO_INCREMENT PRIMARY KEY,
+        kisi_id INT NOT NULL,
+        sosyal_medya_ad VARCHAR(100),
+        FOREIGN KEY (kisi_id) REFERENCES kisiler(kisi_id) ON DELETE CASCADE)
+        `,
+          (err, result) => {
+            if (!err) {
+              console.log("Hata yok");
+            } else {
+              console.log("hata", err);
+            }
+          }
+        );
+      } else {
+        console.log("hata", err);
+      }
+    }
+  );
+};
+
+//!Bire-Çok Tabloya Veri Ekleme
+const createOneToManyUser = (ad, soyad) => {
+  const query = `INSERT INTO kisiler (kisi_ad, kisi_soyad) VALUES (?, ?)`;
+  connection.query(query, [ad, soyad], (err, res) => {
+    if (err) {
+      console.log("err", err);
+    }
+    console.log("res", res);
+  });
+};
+
+//!Bire-Çok Tablosundan sosyal_medya'ya Veri Ekleme
+const createSocialMediaWithUser = () => {
+  const query = `INSERT INTO sosyal_medya (kisi_id, sosyal_medya_ad) VALUES (?, ?)`;
+  connection.query(query, [2, "PINTEREST"], (err, res) => {
+    if (err) {
+      console.log("err", err);
+    }
+    console.log("res", res);
+  });
+};
+
+//!Bire-Çok Tablosunda Veri Listeleme
+const getAllRelationsData = () => {
+  const query = `SELECT * FROM kisiler AS k INNER JOIN sosyal_medya AS s ON k.kisi_id=s.kisi_id`;
+  connection.query(query, (err, res) => {
+    if (err) {
+      console.log("Hata", err);
+    } else {
+      console.log("res: ", res);
+    }
+  });
+};
+
+//!Bire-Çok Tablosunda Id'ye Göre Veri Listeleme
+const getRelationsById = (id) => {
+  const query = `
+  SELECT k.kisi_ad, s.sosyal_medya_id, s.sosyal_medya_ad 
+  FROM kisiler AS k INNER JOIN sosyal_medya AS s ON k.kisi_id=s.kisi_id WHERE k.kisi_id = ?`;
+  connection.query(query, [id], (err, res) => {
+    if (err) {
+      console.log("Hata", err);
+    } else {
+      console.log("res: ", res);
+    }
+  });
+};
+
+//!Bire-Çok Tablosunda Id'ye Göre Veri Güncelleme
+const updateOneToManyById = (sosyalMedyaAdi, kisiId, sosyalMedyaId) => {
+  const query =
+    "UPDATE sosyal_medya SET sosyal_medya_ad = ? WHERE kisi_id = ? AND sosyal_medya_id = ?";
+  connection.query(
+    query,
+    [sosyalMedyaAdi, kisiId, sosyalMedyaId],
+    (err, res) => {
+      if (err) {
+        console.log("err", err);
+      }
+      console.log("res", res);
+    }
+  );
+};
+
+//!Bire-Çok Tablosunda Id'ye Göre Veri Silme
+const deleteOneToManyById = (id) => {
+  const query = "DELETE FROM kisiler WHERE kisi_id = ?";
+  connection.query(query, [id], (err, res) => {
+    if (err) {
+      console.log("err", err);
+    }
+    console.log("res", res);
+  });
+};
+
 connection.connect((err) => {
   if (err) {
     console.log("hata", err);
@@ -174,4 +282,11 @@ connection.connect((err) => {
   // findByNameOrSurname("ali", "dolma");
   // deleteById(4);
   // updateById("buse", "kara", 9);
+  // createOneToManyTable();
+  // createOneToManyUser("kerem", "bilginer");
+  // createSocialMediaWithUser()
+  // getAllRelationsData();
+  // getRelationsById(1);
+  // updateOneToManyById("TWITTER",1,6)
+  // deleteOneToManyById(2)
 });
