@@ -265,6 +265,119 @@ const deleteOneToManyById = (id) => {
   });
 };
 
+//?Bire-Bir tablo oluşturma
+//NOT: FOREIGN KEY verilmiş bu da bire-çok tablosunu oluşturur
+const createOneToOneTable = () => {
+  connection.query(
+    `CREATE TABLE personel_cv(
+    personel_cv_id INT AUTO_INCREMENT PRIMARY KEY,
+    personel_cv_ad VARCHAR(100))
+    `,
+    (err, result) => {
+      if (!err) {
+        connection.query(
+          `CREATE TABLE personel(
+        personel_id INT AUTO_INCREMENT PRIMARY KEY,
+        personel_cv_id INT NOT NULL,
+        personel_ad VARCHAR(100),
+        personel_soyad VARCHAR(100),
+        personel_maas VARCHAR(100),
+        FOREIGN KEY (personel_cv_id) REFERENCES personel_cv(personel_cv_id) ON DELETE CASCADE)
+        `,
+          (err, result) => {
+            if (!err) {
+              console.log("Hata yok");
+            } else {
+              console.log("hata", err);
+            }
+          }
+        );
+      } else {
+        console.log("hata", err);
+      }
+    }
+  );
+};
+
+//?Bire-Bir Tabloya Veri Ekleme
+const createOneToOneUser = (user) => {
+  const query = `INSERT INTO personel_cv (personel_cv_ad) VALUES (?)`;
+  connection.query(query, [process.argv[2]], (err, res) => {
+    if (err) {
+      console.log("err", err);
+    }
+    console.log("res", res);
+    const cvId = res.insertId;
+    const query = `INSERT INTO personel (personel_cv_id, personel_ad, personel_soyad, personel_maas) 
+                  VALUES (?,?,?,?)`;
+    connection.query(
+      query,
+      [cvId, user.ad, user.soyad, user.maas],
+      (err, res) => {
+        if (err) {
+          console.log("err", err);
+        }
+        console.log("res", res);
+      }
+    );
+  });
+};
+
+//?Bire-Bir Tablosunda Veri Listeleme
+const getAllRelationsData2 = () => {
+  const query = `
+  SELECT p.personel_ad, p.personel_soyad, p.personel_maas, pc.personel_cv_ad 
+  FROM personel AS p INNER JOIN personel_cv AS pc ON p.personel_cv_id=pc.personel_cv_id`;
+  connection.query(query, (err, res) => {
+    if (err) {
+      console.log("Hata", err);
+    } else {
+      console.log("res: ", res);
+    }
+  });
+};
+
+//?Bire-Bir Tablosunda Id'ye Göre Veri Güncelleme
+const updateOneToOneById = (id, cvName) => {
+  const query =
+    "SELECT p.personel_id,personel_cv_id FROM personel AS p WHERE p.personel_id = ?";
+  connection.query(query, [id], (err, res) => {
+    if (err) {
+      console.log("err", err);
+    }
+    console.log("res", res);
+    const cvId = res[0].personel_cv_id;
+    const query =
+      "UPDATE personel_cv SET personel_cv_ad = ? WHERE personel_cv_id = ?";
+    connection.query(query, [cvName, cvId], (err, res) => {
+      if (err) {
+        console.log("err", err);
+      }
+      console.log("res", res);
+    });
+  });
+};
+
+//?Bire-Bir Tablosunda Id'ye Göre Veri Silme
+const deleteOneToOneById = (id) => {
+  const query =
+    "SELECT p.personel_id,personel_cv_id FROM personel AS p WHERE p.personel_id = ?";
+  connection.query(query, [id], (err, res) => {
+    if (err) {
+      console.log("err", err);
+    }
+    console.log("res", res);
+    const cvId = res[0].personel_cv_id;
+    const query = "DELETE FROM personel_cv WHERE personel_cv_id = ?";
+  connection.query(query, [cvId], (err, res) => {
+    if (err) {
+      console.log("err", err);
+    }
+    console.log("res", res);
+  });
+  });
+};
+
 connection.connect((err) => {
   if (err) {
     console.log("hata", err);
@@ -289,4 +402,9 @@ connection.connect((err) => {
   // getRelationsById(1);
   // updateOneToManyById("TWITTER",1,6)
   // deleteOneToManyById(2)
+  // createOneToOneTable()
+  // createOneToOneUser({ad:"Ali",soyad:"Kara",maas:"50.000₺"})
+  // getAllRelationsData2()
+  // updateOneToOneById(3,"Yeni Bir CV2");
+  // deleteOneToOneById(3)
 });
